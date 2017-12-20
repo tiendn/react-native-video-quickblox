@@ -22,6 +22,7 @@ import com.quickblox.videochat.webrtc.callbacks.QBRTCSessionStateCallback;
 import com.quickblox.videochat.webrtc.exception.QBRTCException;
 import com.quickblox.videochat.webrtc.view.QBRTCVideoTrack;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -81,6 +82,10 @@ public class QuickbloxHandler implements QBRTCClientVideoTracksCallbacks<QBRTCSe
         return session;
     }
 
+    /**
+     * Set current session (video/call)
+     * @param session: QBRTCSession
+     */
     public void setSession(QBRTCSession session) {
         if (session != null) {
             this.session = session;
@@ -120,6 +125,9 @@ public class QuickbloxHandler implements QBRTCClientVideoTracksCallbacks<QBRTCSe
                 });
 
         QBRTCClient.getInstance(reactApplicationContext).addSessionCallbacksListener(new QBRTCClientSessionCallbacks() {
+            /**
+             * Called each time when new session request is received.
+             */
             @Override
             public void onReceiveNewSession(QBRTCSession qbrtcSession) {
 
@@ -129,43 +137,71 @@ public class QuickbloxHandler implements QBRTCClientVideoTracksCallbacks<QBRTCSe
                     }});
                     return;
                 }
-
+//                Map<String,String> userInfo = qbrtcSession.getUserInfo();
                 setSession(qbrtcSession);
-                //[self.localViewManager attachLocalCameraStream:self.session];
-                quickbloxClient.receiveCallSession(session, qbrtcSession.getCallerID());
+
+                /**
+                 * Get CalledId insteadOf get from getUserInfo.get("userId") because userId not in getUserInfo() results
+                 */
+                Log.d("Monkeyyy", session.getUserInfo().toString());
+//                Log.d("Monkeyyy", session.toString());
+//                Integer userId = qbrtcSession.getCallerID();
+                quickbloxClient.receiveCallSession(session, Integer.valueOf(session.getUserInfo().get("userId")));
+//                quickbloxClient.receiveCallSession(session, userId);
             }
 
-            @Override
-            public void onUserNoActions(QBRTCSession qbrtcSession, Integer integer) {
-
-            }
-
-            @Override
-            public void onSessionStartClose(QBRTCSession qbrtcSession) {
-
-            }
-
+            /**
+             * Called in case when user didn't answer in timer expiration period
+             */
             @Override
             public void onUserNotAnswer(QBRTCSession qbrtcSession, Integer integer) {
-
+                quickbloxClient.sessionDidClose(qbrtcSession);
+                session = null;
             }
 
+            /**
+             * Called in case when opponent has rejected you call
+             */
             @Override
             public void onCallRejectByUser(QBRTCSession qbrtcSession, Integer integer, Map<String, String> map) {
                 quickbloxClient.userRejectCall(integer);
             }
 
+            /**
+             * Called in case when opponent has accepted you call
+             */
             @Override
             public void onCallAcceptByUser(QBRTCSession qbrtcSession, Integer integer, Map<String, String> map) {
                 quickbloxClient.userAcceptCall(integer);
             }
 
+            /**
+             * Called in case when user didn't make any actions on received session
+             */
+            @Override
+            public void onUserNoActions(QBRTCSession qbrtcSession, Integer integer) {
+
+            }
+
+            /**
+             * Called in case when opponent hung up
+             */
             @Override
             public void onReceiveHangUpFromUser(QBRTCSession qbrtcSession, Integer integer, Map<String, String> map) {
                 QuickbloxHandler.this.release();
                 quickbloxClient.userHungUp(integer);
             }
+            /**
+             * Called in case when session will close
+             */
+            @Override
+            public void onSessionStartClose(QBRTCSession qbrtcSession) {
 
+            }
+
+            /**
+             * Called when session is closed.
+             */
             @Override
             public void onSessionClosed(QBRTCSession qbrtcSession) {
                 quickbloxClient.sessionDidClose(qbrtcSession);
@@ -192,8 +228,15 @@ public class QuickbloxHandler implements QBRTCClientVideoTracksCallbacks<QBRTCSe
 
     public void startCall(List<Integer> userIDs, Integer callRequestId, String realName, String avatar) {
         Log.d(TAG, "start call user: " + userIDs.toString() + " " + realName);
+        //Initiate opponents list
 
-        QBRTCSession session = QBRTCClient.getInstance(reactApplicationContext).createNewSessionWithOpponents(userIDs, QBRTCTypes.QBConferenceType.QB_CONFERENCE_TYPE_VIDEO);
+
+        /**
+         * @QBConferenceType: For audio/video call.
+         */
+        QBRTCSession session = QBRTCClient.getInstance(reactApplicationContext).
+                createNewSessionWithOpponents(userIDs, QBRTCTypes.QBConferenceType.QB_CONFERENCE_TYPE_VIDEO);
+
         this.setSession(session);
 
         Map<String, String> userInfo = new HashMap<>();
@@ -202,6 +245,9 @@ public class QuickbloxHandler implements QBRTCClientVideoTracksCallbacks<QBRTCSe
         userInfo.put("realName", realName);
         userInfo.put("avatar", avatar);
         userInfo.put("userId", this.currentUser.getId().toString());
+
+//        Log.d("UserInfo", this.currentUser.getId().toString());
+
         this.session.startCall(userInfo);
     }
 
@@ -212,16 +258,24 @@ public class QuickbloxHandler implements QBRTCClientVideoTracksCallbacks<QBRTCSe
 
     }
 
+    /**
+     * Called in case when connection with the opponent is established
+     */
     @Override
     public void onConnectedToUser(QBRTCSession qbrtcSession, Integer integer) {
 
     }
 
+    /**
+     * Called in case when the opponent is disconnected
+     */
     @Override
     public void onDisconnectedFromUser(QBRTCSession qbrtcSession, Integer integer) {
 
     }
-
+    /**
+     * Called in case when connection is closed
+     */
     @Override
     public void onConnectionClosedForUser(QBRTCSession qbrtcSession, Integer integer) {
 
@@ -229,13 +283,18 @@ public class QuickbloxHandler implements QBRTCClientVideoTracksCallbacks<QBRTCSe
     //</editor-fold>
 
     //<editor-fold desc="QBRTCClientVideoTracksCallbacks">
+    /**
+     * Called when local video track was received
+     */
     @Override
     public void onLocalVideoTrackReceive(QBRTCSession qbrtcSession, QBRTCVideoTrack qbrtcVideoTrack) {
         Log.d(TAG, "onLocalVideoTrackReceive");
         if (localViewManager != null)
             localViewManager.renderVideoTrack(qbrtcVideoTrack);
     }
-
+    /**
+     * Called when remote video track was received
+     */
     @Override
     public void onRemoteVideoTrackReceive(QBRTCSession qbrtcSession, QBRTCVideoTrack qbrtcVideoTrack, Integer integer) {
         Log.d(TAG, "onRemoteVideoTrackReceive");
@@ -246,21 +305,30 @@ public class QuickbloxHandler implements QBRTCClientVideoTracksCallbacks<QBRTCSe
     //</editor-fold>
 
     //<editor-fold desc="QBRTCSessionConnectionCallbacks">
+    /**
+     * Called in case when connection establishment process is started
+     */
     @Override
     public void onStartConnectToUser(QBRTCSession qbrtcSession, Integer integer) {
 
     }
-
+    /**
+     * Called in case when the opponent is disconnected by timeout
+     */
     @Override
     public void onDisconnectedTimeoutFromUser(QBRTCSession qbrtcSession, Integer integer) {
 
     }
-
+    /**
+     * Called in case when connection has failed with the opponent
+     */
     @Override
     public void onConnectionFailedWithUser(QBRTCSession qbrtcSession, Integer integer) {
 
     }
-
+    /**
+     * Called in case of some errors occurred during connection establishment process
+     */
     public void onError(QBRTCSession qbrtcSession, QBRTCException e) {
 
     }

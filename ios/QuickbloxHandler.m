@@ -67,10 +67,12 @@
     self.session = newSession;
     RCTLogInfo(@"start call with session %@", self.session);
     [self.localViewManager attachLocalCameraStream:self.session];
+    NSString* userId = [NSString stringWithFormat:@"%lu", (unsigned long)self.currentUser.ID];
     NSDictionary *userInfo = @{ @"callRequestId": callRequestId,
                                 @"sessionId": self.session.ID,
                                 @"realName": realName,
-                                @"avatar": avatar};
+                                @"avatar": avatar,
+                                @"userId": userId};
     [newSession startCall:userInfo];
     
     [QMSoundManager playCallingSound];
