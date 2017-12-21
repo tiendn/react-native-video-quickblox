@@ -212,7 +212,26 @@ public class RNQuickbloxModule extends ReactContextBaseJavaModule {
                 callback.invoke(s);
             }
         });
-//        callback.invoke(mediaStreamManager.getCurrentCameraId());
+    }
+
+    /**
+     * Set mute/unmute audio
+     * @param isEnabled
+     */
+    @ReactMethod
+    public void setAudioEnabled(boolean isEnabled) {
+        QBMediaStreamManager mediaStreamManager = QuickbloxHandler.getInstance().getSession().getMediaStreamManager();
+        mediaStreamManager.setAudioEnabled(isEnabled);
+    }
+
+    /**
+     * Set mute/unmute video
+     * @param isEnabled
+     */
+    @ReactMethod
+    public void setVideoEnabled(boolean isEnabled) {
+        QBMediaStreamManager mediaStreamManager = QuickbloxHandler.getInstance().getSession().getMediaStreamManager();
+        mediaStreamManager.setVideoEnabled(isEnabled);
     }
 
     @ReactMethod
