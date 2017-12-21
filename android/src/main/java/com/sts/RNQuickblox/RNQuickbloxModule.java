@@ -24,8 +24,12 @@ import com.quickblox.core.request.QBPagedRequestBuilder;
 import com.quickblox.core.result.HttpStatus;
 import com.quickblox.users.QBUsers;
 import com.quickblox.users.model.QBUser;
+import com.quickblox.videochat.webrtc.QBMediaStreamManager;
+import com.quickblox.videochat.webrtc.QBRTCCameraVideoCapturer;
 import com.quickblox.videochat.webrtc.QBRTCConfig;
 import com.quickblox.videochat.webrtc.QBRTCSession;
+
+import org.webrtc.CameraVideoCapturer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -118,10 +122,10 @@ public class RNQuickbloxModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void getUsers(final Callback callback) {
+    public void getUsers(int page, int limit, final Callback callback) {
         QBPagedRequestBuilder pagedRequestBuilder = new QBPagedRequestBuilder();
-        pagedRequestBuilder.setPage(1);
-        pagedRequestBuilder.setPerPage(50);
+        pagedRequestBuilder.setPage(page);
+        pagedRequestBuilder.setPerPage(limit);
 
         QBUsers.getUsers(pagedRequestBuilder).performAsync(new QBEntityCallback<ArrayList<QBUser>>() {
             @Override
@@ -172,7 +176,7 @@ public class RNQuickbloxModule extends ReactContextBaseJavaModule {
 
             @Override
             public void onError(QBResponseException e) {
-
+                callback.invoke(e.getMessage());
             }
         });
     }
@@ -195,6 +199,23 @@ public class RNQuickbloxModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
+    public void switchCamera(final Callback callback) {
+        QBRTCCameraVideoCapturer videoCapturer = (QBRTCCameraVideoCapturer) (QuickbloxHandler.getInstance().getSession().getMediaStreamManager().getVideoCapturer());
+        videoCapturer.switchCamera(new CameraVideoCapturer.CameraSwitchHandler() {
+            @Override
+            public void onCameraSwitchDone(boolean b) {
+                callback.invoke(null, b);
+            }
+
+            @Override
+            public void onCameraSwitchError(String s) {
+                callback.invoke(s);
+            }
+        });
+//        callback.invoke(mediaStreamManager.getCurrentCameraId());
+    }
+
+    @ReactMethod
     public void rejectCall() {
         Map<String, String> userInfo = new HashMap<>();
         userInfo.put("key", "value");
@@ -209,6 +230,7 @@ public class RNQuickbloxModule extends ReactContextBaseJavaModule {
     }
 
     public void userAcceptCall(Integer userId) {
+        Log.d("UserAccepptCallMonkeyyyyy", userId.toString());
         WritableMap params = Arguments.createMap();
         params.putString("", "");
         reactApplicationContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit(USER_ACCEPT_CALL, params);

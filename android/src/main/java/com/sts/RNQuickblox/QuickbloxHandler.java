@@ -1,9 +1,10 @@
 package com.sts.RNQuickblox;
 
+import android.telecom.Call;
 import android.util.Log;
 
 import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReactMethod;
+//import com.facebook.react.bridge.ReactMethod;
 import com.quickblox.auth.session.QBSettings;
 import com.quickblox.chat.QBChatService;
 import com.quickblox.chat.QBSignaling;
@@ -11,8 +12,9 @@ import com.quickblox.chat.QBWebRTCSignaling;
 import com.quickblox.chat.listeners.QBVideoChatSignalingManagerListener;
 import com.quickblox.users.model.QBUser;
 import com.quickblox.videochat.webrtc.BaseSession;
+//import com.quickblox.videochat.webrtc.QBRTCCameraVideoCapturer;
 import com.quickblox.videochat.webrtc.QBRTCClient;
-import com.quickblox.videochat.webrtc.QBRTCConfig;
+//import com.quickblox.videochat.webrtc.QBRTCConfig;
 import com.quickblox.videochat.webrtc.QBRTCSession;
 import com.quickblox.videochat.webrtc.QBRTCTypes;
 import com.quickblox.videochat.webrtc.callbacks.QBRTCClientSessionCallbacks;
@@ -21,6 +23,8 @@ import com.quickblox.videochat.webrtc.callbacks.QBRTCSessionConnectionCallbacks;
 import com.quickblox.videochat.webrtc.callbacks.QBRTCSessionStateCallback;
 import com.quickblox.videochat.webrtc.exception.QBRTCException;
 import com.quickblox.videochat.webrtc.view.QBRTCVideoTrack;
+
+import org.webrtc.CameraVideoCapturer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -332,5 +336,21 @@ public class QuickbloxHandler implements QBRTCClientVideoTracksCallbacks<QBRTCSe
     public void onError(QBRTCSession qbrtcSession, QBRTCException e) {
 
     }
+
+//    public void switchCamera(Callback cb) {
+//        QBRTCCameraVideoCapturer videoCapturer = (QBRTCCameraVideoCapturer) (session.getMediaStreamManager().getVideoCapturer());
+//        videoCapturer.switchCamera(new CameraVideoCapturer.CameraSwitchHandler() {
+//            @Override
+//            public void onCameraSwitchDone(boolean b) {
+////                QuickbloxHandler.this.release();
+////                quickbloxClient.userHungUp(integer);
+//                cb.invoke(b);
+//            }
+//
+//            @Override
+//            public void onCameraSwitchError(String s) {
+//            }
+//        });
+//    }
     //</editor-fold>
 }
