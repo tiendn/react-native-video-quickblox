@@ -96,6 +96,33 @@ RCT_EXPORT_METHOD(rejectCall) {
     [QuickbloxHandler sharedInstance].session = nil;
 }
 
+RCT_EXPORT_METHOD(switchCamera) {
+//    AVCaptureDevicePosition position = [QBRTCCameraCapture cameraCapture].videoCapture.position;
+//    AVCaptureDevicePosition newPosition = position == AVCaptureDevicePositionBack ? AVCaptureDevicePositionFront : AVCaptureDevicePositionBack;
+//    
+//    if ([self.videoCapture hasCameraForPosition:newPosition]) {
+//        self.videoCapture.position = newPosition;
+//    }
+}
+
+RCT_EXPORT_METHOD(toggleVideo) {
+    [QuickbloxHandler sharedInstance].session.localMediaStream.videoTrack.enabled ^= 1;
+}
+
+RCT_EXPORT_METHOD(toggleAudio) {
+    [QuickbloxHandler sharedInstance].session.localMediaStream.audioTrack.enabled ^= 1;
+}
+
+RCT_EXPORT_METHOD(setVideoEnabled:(BOOL)isEnabled) {
+    RCTLogInfo(@"Set Video Enabled %d", isEnabled);
+    [QuickbloxHandler sharedInstance].session.localMediaStream.videoTrack.enabled = isEnabled;
+    
+}
+
+RCT_EXPORT_METHOD(setAudioEnabled:(BOOL *)isEnabled) {
+    [QuickbloxHandler sharedInstance].session.localMediaStream.audioTrack.enabled = isEnabled;
+}
+
 - (void)receiveCallSession:(QBRTCSession *)session userId:(NSNumber *)userId {
     [self sendEventWithName:DID_RECEIVE_CALL_SESSION body:@{@"userId": userId}];
 }

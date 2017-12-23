@@ -214,6 +214,18 @@ public class RNQuickbloxModule extends ReactContextBaseJavaModule {
         });
     }
 
+    @ReactMethod
+    public void toggleAudio() {
+        QBMediaStreamManager mediaStreamManager = QuickbloxHandler.getInstance().getSession().getMediaStreamManager();
+        mediaStreamManager.setAudioEnabled(!mediaStreamManager.isAudioEnabled());
+    }
+
+    @ReactMethod
+    public void toggleVideo() {
+        QBMediaStreamManager mediaStreamManager = QuickbloxHandler.getInstance().getSession().getMediaStreamManager();
+        mediaStreamManager.setVideoEnabled(!mediaStreamManager.isVideoEnabled());
+    }
+
     /**
      * Set mute/unmute audio
      * @param isEnabled
@@ -249,7 +261,7 @@ public class RNQuickbloxModule extends ReactContextBaseJavaModule {
     }
 
     public void userAcceptCall(Integer userId) {
-        Log.d("UserAccepptCallMonkeyyyyy", userId.toString());
+        Log.d("UserAcceptCallMonkey", userId.toString());
         WritableMap params = Arguments.createMap();
         params.putString("", "");
         reactApplicationContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit(USER_ACCEPT_CALL, params);
