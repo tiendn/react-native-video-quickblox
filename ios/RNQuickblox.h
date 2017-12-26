@@ -24,7 +24,7 @@
 #define SESSION_DID_CLOSE @"SESSION_DID_CLOSE"
 
 @interface RNQuickblox : RCTEventEmitter <RCTBridgeModule>
-- (void)receiveCallSession:(QBRTCSession *)session userId:(NSNumber *)userId;
+- (void)receiveCallSession:(QBRTCSession *)session userInfo:(NSDictionary<NSString *,NSString *> *)userInfo;
 - (void)userAcceptCall:(NSNumber *)userId;
 - (void)userRejectCall:(NSNumber *)userId;
 - (void)userHungUp:(NSNumber *)userId;

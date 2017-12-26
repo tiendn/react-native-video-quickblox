@@ -27,5 +27,5 @@
 + (QuickbloxHandler *)sharedInstance;
 
 - (void)doNothing;
-- (void)startCall:(NSArray<NSNumber *> *)userIDs callRequestId:(NSNumber *)callRequestId realName:(NSString *)realName avatar:(NSString *)avatar;
+- (void)startCall:(NSArray<NSNumber *> *)userIDs callRequestId:(NSNumber *)callRequestId avatar:(NSString *)avatar;
 @end

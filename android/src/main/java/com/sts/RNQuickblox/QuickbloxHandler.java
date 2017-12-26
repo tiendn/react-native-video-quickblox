@@ -147,7 +147,7 @@ public class QuickbloxHandler implements QBRTCClientVideoTracksCallbacks<QBRTCSe
                 /**
                  * Get CalledId insteadOf get from getUserInfo.get("userId") because userId not in getUserInfo() results
                  */
-                Log.d("Monkeyyy", session.getUserInfo().toString());
+                Log.d("Monkeyyy", session.toString());
 //                Log.d("Monkeyyy", session.toString());
 //                Integer userId = qbrtcSession.getCallerID();
 
@@ -235,8 +235,9 @@ public class QuickbloxHandler implements QBRTCClientVideoTracksCallbacks<QBRTCSe
             QuickbloxHandler.this.remoteVideoViewManager.release();
     }
 
-    public void startCall(List<Integer> userIDs, Integer callRequestId, String realName, String avatar) {
-        Log.d(TAG, "start call user: " + userIDs.toString() + " " + realName);
+    public void startCall(List<Integer> userIDs, Integer callRequestId, String avatar) {
+        Log.d(TAG, "start call user: " + userIDs.toString());
+        Log.d(TAG, "start call user: " + this.currentUser.toString());
         //Initiate opponents list
 
 
@@ -251,7 +252,9 @@ public class QuickbloxHandler implements QBRTCClientVideoTracksCallbacks<QBRTCSe
         Map<String, String> userInfo = new HashMap<>();
         userInfo.put("callRequestId", callRequestId.toString());
         userInfo.put("sessionId", session.getSessionID());
-        userInfo.put("realName", realName);
+        // Replace temperature ( tam thoi )
+        userInfo.put("realName", this.currentUser.getLogin());
+//        userInfo.put("realName", this.currentUser.getFullName());
         userInfo.put("avatar", avatar);
         userInfo.put("userId", this.currentUser.getId().toString());
 

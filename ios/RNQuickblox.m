@@ -7,6 +7,7 @@
 
 #import "RNQuickblox.h"
 #import "QuickbloxHandler.h"
+//#import "AVCaptureDevicePosition.h"
 
 @implementation RNQuickblox
 
@@ -75,8 +76,8 @@ RCT_EXPORT_METHOD(signUp:(NSString *)userName pwd:(NSString *)password realName:
     }];
 }
 
-RCT_EXPORT_METHOD(callToUsers:(NSArray<NSNumber *> *)userIDs callRequestId:(nonnull NSNumber *)callRequestId realName:(NSString *)realName avatar:(NSString *)avatar) {
-    [[QuickbloxHandler sharedInstance] startCall:userIDs callRequestId:callRequestId realName:realName avatar:avatar];
+RCT_EXPORT_METHOD(callToUsers:(NSArray<NSNumber *> *)userIDs callRequestId:(nonnull NSNumber *)callRequestId avatar:(NSString *)avatar) {
+    [[QuickbloxHandler sharedInstance] startCall:userIDs callRequestId:callRequestId avatar:avatar];
 }
 
 RCT_EXPORT_METHOD(acceptCall) {
@@ -99,7 +100,7 @@ RCT_EXPORT_METHOD(rejectCall) {
 RCT_EXPORT_METHOD(switchCamera) {
 //    AVCaptureDevicePosition position = [QBRTCCameraCapture cameraCapture].videoCapture.position;
 //    AVCaptureDevicePosition newPosition = position == AVCaptureDevicePositionBack ? AVCaptureDevicePositionFront : AVCaptureDevicePositionBack;
-//    
+//
 //    if ([self.videoCapture hasCameraForPosition:newPosition]) {
 //        self.videoCapture.position = newPosition;
 //    }
@@ -123,9 +124,19 @@ RCT_EXPORT_METHOD(setAudioEnabled:(BOOL *)isEnabled) {
     [QuickbloxHandler sharedInstance].session.localMediaStream.audioTrack.enabled = isEnabled;
 }
 
-- (void)receiveCallSession:(QBRTCSession *)session userId:(NSNumber *)userId {
-    [self sendEventWithName:DID_RECEIVE_CALL_SESSION body:@{@"userId": userId}];
+//- (void)receiveCallSession:(QBRTCSession *)session userId:(NSNumber *)userId {
+//    NSDictionary *userInfo = @{ @"key" : @"value" };
+//    [self sendEventWithName:DID_RECEIVE_CALL_SESSION body:@{@"userId": userId, @"realName": userInfo}];
+//}
+
+- (void)receiveCallSession:(QBRTCSession *)session userInfo:(NSDictionary<NSString *,NSString *> *)userInfo {
+    
+//    [self sendEventWithName:DID_RECEIVE_CALL_SESSION body:@{@"userId": @([userInfo[@"userId"] integerValue]), @"realName":
+//                                                                @([userInfo[@"realName"] integerValue])}];
+    [self sendEventWithName:DID_RECEIVE_CALL_SESSION body:@{@"userId": userInfo[@"userId"], @"realName":
+                                                                userInfo[@"realName"]}];
 }
+
 
 - (void)userAcceptCall:(NSNumber *)userId {
     [self sendEventWithName:USER_ACCEPT_CALL body:@{@"": @""}];
@@ -150,7 +161,13 @@ RCT_EXPORT_METHOD(setAudioEnabled:(BOOL *)isEnabled) {
             if (!error) {
                 QuickbloxHandler.sharedInstance.currentUser = user;
             }
-            completion(@[error ? error : @(user.ID)]);
+//            NSMutableArray *arr = [NSMutableArray arrayWithCapacity:user.count];
+//            completion(@[error ? error : @(user.ID)]);
+//            SerializableQBUser *u = [[SerializableQBUser alloc] initWithQBUUser:user];
+            
+//            NSString* userInfor = [NSString stringWithFormat:@"%@", user];
+            SerializableQBUser *userInfor = [[SerializableQBUser alloc] initWithQBUUser:user];
+            completion(@[error ? error : [MTLJSONAdapter JSONDictionaryFromModel:userInfor error:&error]]);
         }];
     } errorBlock:^(QBResponse * _Nonnull response) {
         NSError *error = response.error.error;

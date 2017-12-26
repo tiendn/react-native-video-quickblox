@@ -59,18 +59,18 @@
     
 }
 
-- (void)startCall:(NSArray<NSNumber *> *)userIDs callRequestId:(NSNumber *)callRequestId realName:(NSString *)realName avatar:(NSString *)avatar {
+- (void)startCall:(NSArray<NSNumber *> *)userIDs callRequestId:(NSNumber *)callRequestId avatar:(NSString *)avatar {
     //  NSArray *opponentsIDs = @[@22606048, @22644894];
-    RCTLogInfo(@"start call user %@ %@", userIDs, realName);
+    RCTLogInfo(@"start call user %@", userIDs);
     QBRTCSession *newSession = [QBRTCClient.instance createNewSessionWithOpponents:userIDs
                                                                 withConferenceType:QBRTCConferenceTypeVideo];
     self.session = newSession;
     RCTLogInfo(@"start call with session %@", self.session);
     [self.localViewManager attachLocalCameraStream:self.session];
-    NSString* userId = [NSString stringWithFormat:@"%lu", (unsigned long)self.currentUser.ID];
+    NSString* userId = [NSString stringWithFormat:@"%lu", (unsigned long)self.currentUser.ID]; // <-- Add this line
     NSDictionary *userInfo = @{ @"callRequestId": callRequestId,
                                 @"sessionId": self.session.ID,
-                                @"realName": realName,
+                                @"realName": self.currentUser.fullName,
                                 @"avatar": avatar,
                                 @"userId": userId};
     [newSession startCall:userInfo];
@@ -89,10 +89,12 @@
     }
     self.session = session;
     RCTLogInfo(@"receive call with session %@", self.session);
-    //  self.session.localMediaStream.videoTrack.enabled = 1;
+    
     [self.localViewManager attachLocalCameraStream:self.session];
     
-    [self.quickbloxClient receiveCallSession:session userId:@([userInfo[@"userId"] integerValue])];
+//    [self.quickbloxClient receiveCallSession:session userId:@([userInfo[@"userId"] integerValue])];
+//    [self.quickbloxClient receiveCallSession:session userId:@([userInfo[@"userId"] integerValue]) realName:@([userInfo[@"realName"] stringValue])];
+    [self.quickbloxClient receiveCallSession:session userInfo:userInfo];
 }
 
 - (void)session:(QBRTCSession *)session didChangeState:(QBRTCSessionState)state {

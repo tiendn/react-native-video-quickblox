@@ -142,14 +142,14 @@ public class RNQuickbloxModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void callToUsers(ReadableArray userIDs, final Integer callRequestId, final String realName, final String avatar) {
+    public void callToUsers(ReadableArray userIDs, final Integer callRequestId, final String avatar) {
         List<Integer> ids = new ArrayList<>();
 //        ids.add(25581924);
 
         for (int i = 0; i < userIDs.size(); i++)
             ids.add(userIDs.getInt(i));
 
-        QuickbloxHandler.getInstance().startCall(ids, callRequestId, realName, avatar);
+        QuickbloxHandler.getInstance().startCall(ids, callRequestId, avatar);
     }
 
     private void login(String userId, String password, final Callback callback) {
@@ -164,8 +164,8 @@ public class RNQuickbloxModule extends ReactContextBaseJavaModule {
                     public void onSuccess(Object o, Bundle bundle) {
                         QuickbloxHandler.getInstance().setCurrentUser(user);
                         QuickbloxHandler.getInstance().init();
-                        Log.d("User login ", user.toString());
-                        callback.invoke(user.getId());
+//                        Log.d("User login ", user.toString());
+                        callback.invoke(gson.toJson(user));
                     }
 
                     @Override
@@ -257,13 +257,12 @@ public class RNQuickbloxModule extends ReactContextBaseJavaModule {
 
     public void receiveCallSession(QBRTCSession session) {
         WritableMap params = Arguments.createMap();
-//        Log.d("ReceiveCallSession ", session.getUserInfo().toString());
+        Log.d("ReceiveCallSession ", session.getUserInfo().toString());
 //        Log.d("ReceiveCallSession ", session.getUserInfo().get("realName").toString());
 
         params.putInt("userId", Integer.valueOf(session.getUserInfo().get("userId")));
         params.putString("realName", session.getUserInfo().get("realName"));
 
-//        params.putString("realName", );
         reactApplicationContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit(DID_RECEIVE_CALL_SESSION, params);
     }
 
