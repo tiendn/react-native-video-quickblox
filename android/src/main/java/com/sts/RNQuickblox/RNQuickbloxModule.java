@@ -164,6 +164,7 @@ public class RNQuickbloxModule extends ReactContextBaseJavaModule {
                     public void onSuccess(Object o, Bundle bundle) {
                         QuickbloxHandler.getInstance().setCurrentUser(user);
                         QuickbloxHandler.getInstance().init();
+                        Log.d("User login ", user.toString());
                         callback.invoke(user.getId());
                     }
 
@@ -254,9 +255,15 @@ public class RNQuickbloxModule extends ReactContextBaseJavaModule {
         QuickbloxHandler.getInstance().setSession(null);
     }
 
-    public void receiveCallSession(QBRTCSession session, Integer userId) {
+    public void receiveCallSession(QBRTCSession session) {
         WritableMap params = Arguments.createMap();
-        params.putInt("userId", userId);
+//        Log.d("ReceiveCallSession ", session.getUserInfo().toString());
+//        Log.d("ReceiveCallSession ", session.getUserInfo().get("realName").toString());
+
+        params.putInt("userId", Integer.valueOf(session.getUserInfo().get("userId")));
+        params.putString("realName", session.getUserInfo().get("realName"));
+
+//        params.putString("realName", );
         reactApplicationContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit(DID_RECEIVE_CALL_SESSION, params);
     }
 

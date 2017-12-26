@@ -150,7 +150,12 @@ public class QuickbloxHandler implements QBRTCClientVideoTracksCallbacks<QBRTCSe
                 Log.d("Monkeyyy", session.getUserInfo().toString());
 //                Log.d("Monkeyyy", session.toString());
 //                Integer userId = qbrtcSession.getCallerID();
-                quickbloxClient.receiveCallSession(session, Integer.valueOf(session.getUserInfo().get("userId")));
+
+
+//                quickbloxClient.receiveCallSession(session, Integer.valueOf(session.getUserInfo().get("userId")));
+                quickbloxClient.receiveCallSession(session);
+
+
 //                quickbloxClient.receiveCallSession(session, userId);
             }
 
