@@ -1,0 +1,38 @@
+{
+  "name": "VideoChat",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node node_modules/react-native/local-cli/cli.js start",
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "test": "jest"
+  },
+  "dependencies": {
+    "prop-types": "^15.6.0",
+    "react": "16.0.0",
+    "react-native": "^0.51.0",
+    "react-native-spinkit": "^1.1.1",
+    "react-native-video-quickblox": "https://github.com/ttdat89/react-native-video-quickblox"
+  },
+  "devDependencies": {
+    "@types/react-native": "^0.51.0",
+    "babel-eslint": "^8.0.1",
+    "babel-jest": "21.2.0",
+    "babel-preset-react-native": "4.0.0",
+    "eslint": "^4.9.0",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-config-defaults": "^9.0.0",
+    "eslint-config-rallycoding": "^3.2.0",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-jsx-a11y": "^6.0.2",
+    "eslint-plugin-react": "^7.4.0",
+    "eslint-plugin-react-native": "^3.1.0",
+    "jest": "21.2.1",
+    "react-test-renderer": "16.0.0"
+  },
+  "jest": {
+    "preset": "react-native"
+  }
+}
