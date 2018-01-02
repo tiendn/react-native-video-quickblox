@@ -1,9 +1,13 @@
 package com.sts.RNQuickblox;
 
+import android.os.Build;
 import android.os.Bundle;
+import android.telecom.Call;
 import android.util.Log;
 
+import com.facebook.common.activitylistener.BaseActivityListener;
 import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.BaseActivityEventListener;
 import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.JavaScriptModule;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -27,7 +31,10 @@ import com.quickblox.users.model.QBUser;
 import com.quickblox.videochat.webrtc.QBMediaStreamManager;
 import com.quickblox.videochat.webrtc.QBRTCCameraVideoCapturer;
 import com.quickblox.videochat.webrtc.QBRTCConfig;
+import com.quickblox.videochat.webrtc.QBRTCScreenCapturer;
 import com.quickblox.videochat.webrtc.QBRTCSession;
+import com.quickblox.videochat.webrtc.callbacks.QBRTCStatsReportCallback;
+import com.quickblox.videochat.webrtc.stats.QBRTCStatsReport;
 
 import org.webrtc.CameraVideoCapturer;
 
@@ -253,6 +260,36 @@ public class RNQuickbloxModule extends ReactContextBaseJavaModule {
         userInfo.put("key", "value");
         QuickbloxHandler.getInstance().getSession().rejectCall(userInfo);
         QuickbloxHandler.getInstance().setSession(null);
+    }
+
+//    @ReactMethod
+//    public void releaseCall() {
+//        QuickbloxHandler.getInstance().getSession().
+//    }
+
+    @ReactMethod
+    public void getTime(final Callback callback) {
+        QBRTCConfig.setStatsReportInterval(1);
+
+//        QBRTCStatsReport statsReport = new QBRTCStatsReport();
+//        Log.d("Stats Report ", statsReport.toString());
+        QuickbloxHandler.getInstance().getSession().addStatsReportCallback(new QBRTCStatsReportCallback() {
+            @Override
+            public void onStatsReportUpdate(QBRTCStatsReport statsReport, Integer userId) {
+                String audiobitrate = statsReport.getAudioReceivedBitrate();
+                String videobitrate = statsReport.getVideoReceivedBitrate();
+                String audioSendInputLevel = statsReport.getAudioSendInputLevel();
+                callback.invoke(statsReport.toString());
+            }
+        });
+    }
+
+    @ReactMethod
+    public void shareScreen(Callback cb) {
+//        QuickbloxHandler.getInstance().getSession().getMediaStreamManager().setVideoCapturer(new QBRTCScreenCapturer(this));
+//        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+//            QBRTCScreenCapturer.requestPermissions(ScreenSharingActivity); //Request permission to share device screen
+//        }
     }
 
     public void receiveCallSession(QBRTCSession session) {

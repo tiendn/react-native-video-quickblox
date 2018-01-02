@@ -345,20 +345,5 @@ public class QuickbloxHandler implements QBRTCClientVideoTracksCallbacks<QBRTCSe
 
     }
 
-//    public void switchCamera(Callback cb) {
-//        QBRTCCameraVideoCapturer videoCapturer = (QBRTCCameraVideoCapturer) (session.getMediaStreamManager().getVideoCapturer());
-//        videoCapturer.switchCamera(new CameraVideoCapturer.CameraSwitchHandler() {
-//            @Override
-//            public void onCameraSwitchDone(boolean b) {
-////                QuickbloxHandler.this.release();
-////                quickbloxClient.userHungUp(integer);
-//                cb.invoke(b);
-//            }
-//
-//            @Override
-//            public void onCameraSwitchError(String s) {
-//            }
-//        });
-//    }
     //</editor-fold>
 }
